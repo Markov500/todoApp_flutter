@@ -5,8 +5,12 @@ import 'package:flutter/material.dart';
 class ElementFormat extends StatelessWidget {
   final Item myItem;
   final onMyItemChange;
+  final onDeleteMyItem;
   const ElementFormat(
-      {super.key, required this.myItem, required this.onMyItemChange});
+      {super.key,
+      required this.myItem,
+      required this.onMyItemChange,
+      required this.onDeleteMyItem});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +42,9 @@ class ElementFormat extends StatelessWidget {
               Icons.delete,
               color: dangerColor,
             ),
-            onPressed: () {},
+            onPressed: () {
+              onDeleteMyItem(myItem);
+            },
           ),
         ),
       ),

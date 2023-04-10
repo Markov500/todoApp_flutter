@@ -22,6 +22,13 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void handleItemDelete(Item item) {
+    var i = myListItem.where((element) => element.id == item.id).first;
+    setState(() {
+      myListItem.remove(i);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +59,7 @@ class _HomeState extends State<Home> {
                       ElementFormat(
                         myItem: i,
                         onMyItemChange: handleItemChange,
+                        onDeleteMyItem: handleItemDelete,
                       ),
                   ],
                 )),
