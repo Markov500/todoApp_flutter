@@ -2,7 +2,6 @@ import 'package:demo/constants/colors.dart';
 import 'package:demo/models/item.dart';
 import 'package:demo/widgets/element_format.dart';
 import 'package:demo/widgets/my_app_bar.dart';
-import 'package:demo/widgets/search_field.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -15,6 +14,14 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final List<Item> myListItem = Item.items;
   final inputController = TextEditingController();
+  List<Item> foundItem = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    foundItem = myListItem;
+  }
 
   void handleItemChange(Item item) {
     setState(() {
@@ -30,9 +37,28 @@ class _HomeState extends State<Home> {
   }
 
   void handleItemAdd(String texteItem) {
-    int id = myListItem.last.id + 1;
+    int id;
+    if (myListItem.isNotEmpty) {
+      id = myListItem.last.id + 1;
+    } else {
+      id = 1;
+    }
+
     setState(() {
       myListItem.add(Item(id: id, texte: texteItem));
+    });
+  }
+
+  void searchItems(String texte) {
+    setState(() {
+      if (texte.isEmpty) {
+        foundItem = myListItem;
+      } else {
+        foundItem = myListItem
+            .where((element) =>
+                element.texte.toLowerCase().contains(texte.toLowerCase()))
+            .toList();
+      }
     });
   }
 
@@ -49,7 +75,28 @@ class _HomeState extends State<Home> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
             child: Column(
               children: [
-                searchField(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: secondaryColor,
+                  ),
+                  child: TextField(
+                    onChanged: (value) {
+                      searchItems(value);
+                    },
+                    decoration: const InputDecoration(
+                        hintText: "Rechercher",
+                        hintStyle: TextStyle(),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          size: 20,
+                        ),
+                        border: InputBorder.none,
+                        prefixIconConstraints:
+                            BoxConstraints(maxHeight: 20, minWidth: 25)),
+                  ),
+                ),
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 25),
                   child: const Text(
@@ -62,7 +109,7 @@ class _HomeState extends State<Home> {
                 Expanded(
                     child: ListView(
                   children: [
-                    for (Item i in myListItem)
+                    for (Item i in foundItem.reversed)
                       ElementFormat(
                         myItem: i,
                         onMyItemChange: handleItemChange,
